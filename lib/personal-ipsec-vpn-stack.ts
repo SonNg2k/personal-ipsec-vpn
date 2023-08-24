@@ -7,17 +7,25 @@ import {Asset} from 'aws-cdk-lib/aws-s3-assets'
 import {Construct} from 'constructs'
 import * as path from 'path'
 
+interface PersonalIpsecVpnStackProps extends StackProps {
+  // US West (Oregon) or Asia Pacific (Hyderabad)
+  region: 'us-west-2' | 'ap-south-2'
+  amiId: string
+}
+
 export class PersonalIpsecVpnStack extends Stack {
-  constructor(scope: Construct, id: string, props?: StackProps) {
+  constructor(scope: Construct, id: string, props: PersonalIpsecVpnStackProps) {
     super(scope, id, props)
+
+    const {region, amiId} = props
 
     // Select the desired image in the EC2 console to get its AMI ID. U should
     // periodically check if the aws_ec2.AmazonLinuxGeneration enum provides a
     // constant value that represents the latest stable version of AL2023.
     // Avoid using the AMI ID like below because it will not always correspond
     // to the latest OS version
-    const ubuntu2204Arm64Image = new aws_ec2.GenericLinuxImage({
-      'us-west-2': 'ami-079f51a7bcca65b92',
+    const ami = new aws_ec2.GenericLinuxImage({
+      [region]: amiId,
     })
 
     const instanceType = aws_ec2.InstanceType.of(
@@ -28,7 +36,7 @@ export class PersonalIpsecVpnStack extends Stack {
     // Create a Key Pair to be used with this EC2 Instance. Since an EC2 KeyPair
     // cannot be updated, you cannot change any property related to the KeyPair.
     const cfnKeyPair = new aws_ec2.CfnKeyPair(this, 'PublicIPsecVpnCfnKeyPair', {
-      keyName: 'public-ipsec-vpn-key-pair',
+      keyName: region + '_public-ipsec-vpn-key-pair',
     })
 
     const vpc = new aws_ec2.Vpc(this, 'PublicIPsecVpnVPC', {
@@ -72,7 +80,7 @@ export class PersonalIpsecVpnStack extends Stack {
     // Allow sts:AssumeRole on Resource ${PublicIPsecVpnEC2Role.Arn} (Principle:
     // Service:ec2.amazonaws.com)
     const role = new aws_iam.Role(this, 'PublicIPsecVpnEC2Role', {
-      roleName: 'PublicIPsecVpnEC2Role',
+      roleName: region + '_PublicIPsecVpnEC2Role',
       // Select a trusted entity
       assumedBy: new aws_iam.ServicePrincipal('ec2.amazonaws.com'),
     })
@@ -88,7 +96,7 @@ export class PersonalIpsecVpnStack extends Stack {
       role,
       securityGroup,
       instanceType,
-      machineImage: ubuntu2204Arm64Image,
+      machineImage: ami,
       blockDevices: [{deviceName: '/dev/xvda', volume: ebsVolume}],
       vpcSubnets: {
         // If you want your instances to have a public IP address and be directly reachable from
