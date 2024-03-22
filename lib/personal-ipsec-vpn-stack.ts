@@ -8,8 +8,8 @@ import {Construct} from 'constructs'
 import * as path from 'path'
 
 interface PersonalIpsecVpnStackProps extends StackProps {
-  // US West (Oregon) or Asia Pacific (Hyderabad)
-  region: 'us-west-2' | 'ap-south-2'
+  // US West (Oregon), Asia Pacific (Hyderabad), or Asia Pacific (Sydney)
+  region: 'us-west-2' | 'ap-south-2' | 'ap-southeast-2'
   amiId: string
 }
 

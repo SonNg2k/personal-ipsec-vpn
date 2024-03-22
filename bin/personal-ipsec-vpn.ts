@@ -17,7 +17,12 @@ const app = new App()
 /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
 // })
 
-const ubuntu2204Arm64Ami = 'ami-0ca512381d3dd7dd8'
+const ubuntu2204Arm64Ami = 'ami-012bf399e76fe4368'
+
+new PersonalIpsecVpnStack(app, 'Australia-PersonalIpsecVpnStack', {
+  region: 'ap-southeast-2',
+  amiId: ubuntu2204Arm64Ami
+})
 
 new PersonalIpsecVpnStack(app, 'India-PersonalIpsecVpnStack', {
   region: 'ap-south-2',
