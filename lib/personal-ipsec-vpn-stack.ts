@@ -2,14 +2,14 @@
 // https://github.com/aws-samples/aws-cdk-examples/commits/master/typescript/ec2-instance
 
 import {CfnOutput, Stack, StackProps, aws_ec2, aws_iam} from 'aws-cdk-lib'
-import {EbsDeviceVolumeType} from 'aws-cdk-lib/aws-ec2'
+import {EbsDeviceVolumeType, InstanceProps, VpcProps} from 'aws-cdk-lib/aws-ec2'
 import {Asset} from 'aws-cdk-lib/aws-s3-assets'
 import {Construct} from 'constructs'
 import * as path from 'path'
 
 interface PersonalIpsecVpnStackProps extends StackProps {
-  // US West (Oregon), Asia Pacific (Hyderabad), or Asia Pacific (Sydney)
-  region: 'us-west-2' | 'ap-south-2' | 'ap-southeast-2'
+  // US West (Oregon), Asia Pacific (Hyderabad), or Asia Pacific (Osaka)
+  region: 'us-west-2' | 'ap-south-2' | 'ap-northeast-3'
   amiId: string
 }
 
@@ -35,8 +35,8 @@ export class PersonalIpsecVpnStack extends Stack {
 
     // Create a Key Pair to be used with this EC2 Instance. Since an EC2 KeyPair
     // cannot be updated, you cannot change any property related to the KeyPair.
-    const cfnKeyPair = new aws_ec2.CfnKeyPair(this, 'PublicIPsecVpnCfnKeyPair', {
-      keyName: region + '_public-ipsec-vpn-key-pair',
+    const keyPair = new aws_ec2.KeyPair(this, 'PublicIPsecVpnKeyPair', {
+      keyPairName: region + '_public-ipsec-vpn-key-pair',
     })
 
     const vpc = new aws_ec2.Vpc(this, 'PublicIPsecVpnVPC', {
@@ -49,7 +49,7 @@ export class PersonalIpsecVpnStack extends Stack {
           subnetType: aws_ec2.SubnetType.PUBLIC,
         },
       ],
-    })
+    } as VpcProps)
 
     const securityGroup = new aws_ec2.SecurityGroup(this, 'PublicIPsecVpnSecGroup', {
       vpc,
@@ -96,6 +96,7 @@ export class PersonalIpsecVpnStack extends Stack {
       role,
       securityGroup,
       instanceType,
+      keyPair,
       machineImage: ami,
       blockDevices: [{deviceName: '/dev/xvda', volume: ebsVolume}],
       vpcSubnets: {
@@ -103,8 +104,7 @@ export class PersonalIpsecVpnStack extends Stack {
         // the Internet, you must place them in a public subnet.
         subnetType: aws_ec2.SubnetType.PUBLIC,
       },
-      keyName: cfnKeyPair.keyName,
-    })
+    } as InstanceProps)
 
     // Create an asset that will be used as part of User Data to run on first
     // load. See S3 assets:
@@ -127,15 +127,15 @@ export class PersonalIpsecVpnStack extends Stack {
 
     // Create outputs for connecting
     new CfnOutput(this, 'IP Address', {value: ec2Instance.instancePublicIp})
-    new CfnOutput(this, 'Key Pair Name', {value: cfnKeyPair.keyName})
+    new CfnOutput(this, 'Key Pair Name', {value: keyPair.keyPairName})
 
     // The secret names by default are prefixed with ec2-ssh-key/, the private
     // key is suffixed with /private, the public key is suffixed with /public.
     // The key pair created by the L1 CloudFormation constructs has the following
     // path name
-    const pemFilename = cfnKeyPair.keyName + '.pem'
+    const pemFilename = keyPair.keyPairName + '.pem'
     const downKeyCmd = [
-      `aws ssm get-parameter --name /ec2/keypair/${cfnKeyPair.attrKeyPairId}`,
+      `aws ssm get-parameter --name /ec2/keypair/${keyPair.keyPairId}`,
       '--with-decryption',
       '--query Parameter.Value',
       `--profile personal`,
