@@ -17,14 +17,18 @@ const app = new App()
 /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
 // })
 
-const ubuntu2204Arm64Ami = 'ami-0ca512381d3dd7dd8'
+// Remember to change the region in your local AWS config
+new PersonalIpsecVpnStack(app, 'Japan-PersonalIpsecVpnStack', {
+  region: 'ap-northeast-3',
+  amiId: 'ami-0f9c25ede29180ec2',
+})
 
 new PersonalIpsecVpnStack(app, 'India-PersonalIpsecVpnStack', {
   region: 'ap-south-2',
-  amiId: ubuntu2204Arm64Ami,
+  amiId: 'unknown',
 })
 
 new PersonalIpsecVpnStack(app, 'US-PersonalIpsecVpnStack', {
   region: 'us-west-2',
-  amiId: ubuntu2204Arm64Ami,
+  amiId: 'ami-06ffa14aad0078bd0',
 })
