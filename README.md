@@ -15,9 +15,7 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 
 ## Reboot the instance after the OS updates
 
-First, update your server with `sudo apt-get update && sudo apt-get
-dist-upgrade` (Ubuntu/Debian) then reboot with `aws ec2 reboot-instances
---profile personal --instance-ids <value>`
+First, update your server with `sudo apt-get update && sudo apt-get dist-upgrade` (Ubuntu/Debian) then reboot with `aws ec2 reboot-instances --profile personal --instance-ids <value>`
 
 Get the InstanceId of the VPN server:
 

@@ -9,7 +9,7 @@ import * as path from 'path'
 
 interface PersonalIpsecVpnStackProps extends StackProps {
   // US West (Oregon), Asia Pacific (Hyderabad), or Asia Pacific (Osaka)
-  region: 'us-west-2' | 'ap-south-2' | 'ap-northeast-3'
+  region: 'us-west-2' | 'ap-south-2' | 'ap-northeast-3' | 'ap-southeast-2'
   amiId: string
 }
 
