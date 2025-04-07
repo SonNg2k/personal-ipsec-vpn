@@ -25,7 +25,7 @@ new PersonalIpsecVpnStack(app, 'India-PersonalIpsecVpnStack', {
 
 new PersonalIpsecVpnStack(app, 'US-PersonalIpsecVpnStack', {
   region: 'us-west-2',
-  amiId: 'ami-06ffa14aad0078bd0',
+  amiId: 'ami-0e8c824f386e1de06',
 })
 
 new PersonalIpsecVpnStack(app, 'Oceania-PersonalIpsecVpnStack', {
