@@ -17,7 +17,11 @@ const app = new App()
 /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
 // })
 
-// !Remember to change the region in your local AWS config
+/*
+!Remember to change the region in your local AWS config, delete the related S3
+bucket as well as the CloudFormation stack, and update to the latest AMI in your region.
+ */
+
 new PersonalIpsecVpnStack(app, 'India-PersonalIpsecVpnStack', {
   region: 'ap-south-2',
   amiId: 'unknown',
@@ -25,7 +29,7 @@ new PersonalIpsecVpnStack(app, 'India-PersonalIpsecVpnStack', {
 
 new PersonalIpsecVpnStack(app, 'US-PersonalIpsecVpnStack', {
   region: 'us-west-2',
-  amiId: 'ami-0e8c824f386e1de06',
+  amiId: 'ami-0836fd4a4a0b4f6ec',
 })
 
 new PersonalIpsecVpnStack(app, 'Oceania-PersonalIpsecVpnStack', {
