@@ -8,8 +8,8 @@ import {Construct} from 'constructs'
 import * as path from 'path'
 
 interface PersonalIpsecVpnStackProps extends StackProps {
-  // US West (Oregon), Asia Pacific (Hyderabad), or Asia Pacific (Osaka)
-  region: 'us-west-2' | 'ap-south-2' | 'ap-northeast-3' | 'ap-southeast-2'
+  // US West (Oregon), Asia Pacific (Mumbai), or Asia Pacific (Osaka)
+  region: 'us-west-2' | 'ap-south-1' | 'ap-northeast-3' | 'ap-southeast-2'
   amiId: string
 }
 
@@ -30,7 +30,7 @@ export class PersonalIpsecVpnStack extends Stack {
 
     const instanceType = aws_ec2.InstanceType.of(
       aws_ec2.InstanceClass.T4G,
-      aws_ec2.InstanceSize.NANO
+      aws_ec2.InstanceSize.NANO,
     )
 
     // Create a Key Pair to be used with this EC2 Instance. Since an EC2 KeyPair
@@ -61,12 +61,12 @@ export class PersonalIpsecVpnStack extends Stack {
     securityGroup.addIngressRule(
       aws_ec2.Peer.anyIpv4(),
       aws_ec2.Port.udp(500),
-      'Allow UDP port 500'
+      'Allow UDP port 500',
     )
     securityGroup.addIngressRule(
       aws_ec2.Peer.anyIpv4(),
       aws_ec2.Port.udp(4500),
-      'Allow UDP port 4500'
+      'Allow UDP port 4500',
     )
 
     // Volume must be >= 8GB, which is equal to or larger than the minimum
@@ -88,7 +88,7 @@ export class PersonalIpsecVpnStack extends Stack {
     // The policy for EC2 Role to enable Systems Manager service core
     // functionality.
     role.addManagedPolicy(
-      aws_iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonSSMManagedInstanceCore')
+      aws_iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonSSMManagedInstanceCore'),
     )
 
     const ec2Instance = new aws_ec2.Instance(this, 'Instance', {

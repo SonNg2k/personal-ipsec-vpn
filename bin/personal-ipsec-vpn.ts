@@ -23,8 +23,8 @@ bucket as well as the CloudFormation stack, and update to the latest AMI in your
  */
 
 new PersonalIpsecVpnStack(app, 'India-PersonalIpsecVpnStack', {
-  region: 'ap-south-2',
-  amiId: 'unknown',
+  region: 'ap-south-1',
+  amiId: 'ami-0848881f2a3dcebd1',
 })
 
 new PersonalIpsecVpnStack(app, 'US-PersonalIpsecVpnStack', {
